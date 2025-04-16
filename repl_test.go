@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/SyncTank/pokedex/pokeAPI"
 	"testing"
-	_"errors"
 )
 
 func TestCleanInput(t *testing.T) {
@@ -29,5 +29,13 @@ func TestCleanInput(t *testing.T) {
 				return
 			}
 		}
+	}
+}
+
+func TestPokeEndPoint(t *testing.T) {
+	_, err := pokeAPI.GetLocation(pokeAPI.Endpoint)
+	if err != nil {
+		t.Errorf("Error reaching endpoint:")
+		return
 	}
 }

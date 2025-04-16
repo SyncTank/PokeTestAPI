@@ -1,18 +1,19 @@
 package main
 
 import (
-	"fmt"
-	"strings"
 	"bufio"
+	"fmt"
 	"os"
+	"strings"
+
 	"github.com/SyncTank/pokedex/pokeAPI"
 )
 
 type cliCommand struct {
-	name string
+	name        string
 	description string
-	callback func() error
-	settings *config
+	callback    func() error
+	settings    *config
 }
 
 type config struct {
@@ -20,33 +21,11 @@ type config struct {
 	pastURL string
 }
 
-var cliMap = map[string]cliCommand{
-		"exit":{
-			name: "exit",
-			description: "Exit the Pokedex",
-			callback: commandExit,
-		},
-		"help": {
-			name: "help",
-			description: "Displays a helping message",
-			callback: commandHelp,
-		},
-		"map": {
-			name: "map",
-			description: "Displays the names of 20 location areas",
-			callback: commandMap,
-		},
-		"mapb": {
-			name: "mapb",
-			description: "Displays the past names of 20 location areas",
-			callback: commandMapb,
-		},
-	}
+func main() {
 
-func main(){
-	fmt.Println(poke.Test)
+	climap := getCommandList()
 
-	const input = "Pokedex >"
+	const input = "Pokedex > "
 	scn := bufio.NewScanner(os.Stdin)
 	fmt.Printf(input)
 	for scn.Scan() {
@@ -54,9 +33,11 @@ func main(){
 		dataLow := strings.ToLower(data)
 		dataList := strings.Fields(dataLow)
 
-		cap, ok := cliMap[dataList[0]]
+		cap, ok := climap[dataList[0]]
 		if !ok {
 			fmt.Println("Unknown command")
+		} else if cap.name == "help" {
+			commandHelp(climap)
 		} else {
 			cap.callback()
 		}
@@ -65,20 +46,53 @@ func main(){
 	}
 }
 
-func cleanInput(text string) [] string {
-	strList := make([]string, 0);
-	results := make([]string, 0);
+func cleanInput(text string) []string {
+	strList := make([]string, 0)
+	results := make([]string, 0)
 
 	strList = strings.Fields(text)
 
 	for _, value := range strList {
 		results = append(results, value)
 	}
-	return results;
+	return results
 }
 
-func commandHelp() error {
+func getCommandList() map[string]cliCommand {
+	var cmap = map[string]cliCommand{
+		"exit": {
+			name:        "exit",
+			description: "Exit the Pokedex",
+			callback:    commandExit,
+		},
+		"help": {
+			name:        "help",
+			description: "Displays a helping message",
+		},
+		"map": {
+			name:        "map",
+			description: "Displays the names of 20 location areas",
+			callback:    commandMap,
+			settings:    nil,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Displays the past names of 20 location areas",
+			callback:    commandMapb,
+			settings:    nil,
+		},
+	}
+	return cmap
+}
+
+func commandHelp(cmap map[string]cliCommand) error {
 	fmt.Println("Welcome to the Pokedex!")
+	fmt.Println("Usage:\n")
+
+	for _, item := range cmap {
+		fmt.Printf("%s : %s\n", item.name, item.description)
+	}
+	fmt.Println("")
 	return nil
 }
 
@@ -87,13 +101,21 @@ func commandExit() error {
 	os.Exit(0)
 	return nil
 }
+
 func commandMap() error {
-	fmt.Println("Closing the Pokedex... Goodbye!")
-	os.Exit(0)
+	fmt.Println("Showing the next 20 Items!")
+	locationMap, err := pokeAPI.GetLocation(pokeAPI.Endpoint)
+	if err != nil {
+		fmt.Println("Request Failed")
+		return err
+	} else {
+		fmt.Println("Request Sucess")
+		fmt.Println(locationMap)
+	}
 	return nil
 }
+
 func commandMapb() error {
-	fmt.Println("Closing the Pokedex... Goodbye!")
-	os.Exit(0)
+	fmt.Println("Showing the last next 20 Items!")
 	return nil
 }

@@ -21,9 +21,14 @@ type config struct {
 	pastURL string
 }
 
+var climap map[string]cliCommand
+
 func main() {
 
 	climap := getCommandList()
+	for i := range climap {
+		fmt.Println(i)
+	}
 
 	const input = "Pokedex > "
 	scn := bufio.NewScanner(os.Stdin)
@@ -36,8 +41,6 @@ func main() {
 		cap, ok := climap[dataList[0]]
 		if !ok {
 			fmt.Println("Unknown command")
-		} else if cap.name == "help" {
-			commandHelp(climap)
 		} else {
 			cap.callback()
 		}
@@ -59,7 +62,11 @@ func cleanInput(text string) []string {
 }
 
 func getCommandList() map[string]cliCommand {
-	var cmap = map[string]cliCommand{
+	var nConfig = config{
+		nextURL: pokeAPI.Endpoint,
+		pastURL: "",
+	}
+	var result = map[string]cliCommand{
 		"exit": {
 			name:        "exit",
 			description: "Exit the Pokedex",
@@ -68,28 +75,29 @@ func getCommandList() map[string]cliCommand {
 		"help": {
 			name:        "help",
 			description: "Displays a helping message",
+			callback:    commandHelp,
 		},
 		"map": {
 			name:        "map",
 			description: "Displays the names of 20 location areas",
 			callback:    commandMap,
-			settings:    nil,
+			settings:    &nConfig,
 		},
 		"mapb": {
 			name:        "mapb",
 			description: "Displays the past names of 20 location areas",
 			callback:    commandMapb,
-			settings:    nil,
+			settings:    &nConfig,
 		},
 	}
-	return cmap
+	return result
 }
 
-func commandHelp(cmap map[string]cliCommand) error {
+func commandHelp() error {
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:\n")
 
-	for _, item := range cmap {
+	for _, item := range climap {
 		fmt.Printf("%s : %s\n", item.name, item.description)
 	}
 	fmt.Println("")
@@ -104,9 +112,9 @@ func commandExit() error {
 
 func commandMap() error {
 	fmt.Println("Showing the next 20 Items!")
-	locationMap, err := pokeAPI.GetLocation(pokeAPI.Endpoint)
+	locationMap, err := pokeAPI.GetLocation(climap["map"].settings.nextURL)
 	if err != nil {
-		fmt.Println("Request Failed")
+		fmt.Println("Request Failed %w\n", err)
 		return err
 	} else {
 		fmt.Println("Request Sucess")
@@ -117,5 +125,13 @@ func commandMap() error {
 
 func commandMapb() error {
 	fmt.Println("Showing the last next 20 Items!")
+	locationMap, err := pokeAPI.GetLocation(climap["map"].settings.pastURL)
+	if err != nil {
+		fmt.Printf("Request Failed %w\n", err)
+		return err
+	} else {
+		fmt.Println("Request Sucess")
+		fmt.Println(locationMap)
+	}
 	return nil
 }

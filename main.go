@@ -25,10 +25,7 @@ var climap map[string]cliCommand
 
 func main() {
 
-	climap := getCommandList()
-	for i := range climap {
-		fmt.Println(i)
-	}
+	climap = getCommandList()
 
 	const input = "Pokedex > "
 	scn := bufio.NewScanner(os.Stdin)
@@ -111,27 +108,38 @@ func commandExit() error {
 }
 
 func commandMap() error {
-	fmt.Println("Showing the next 20 Items!")
+	//fmt.Println("Showing the next 20 Items!")
 	locationMap, err := pokeAPI.GetLocation(climap["map"].settings.nextURL)
 	if err != nil {
 		fmt.Println("Request Failed %w\n", err)
 		return err
 	} else {
-		fmt.Println("Request Sucess")
-		fmt.Println(locationMap)
+		//fmt.Println("Request Sucess")
+    climap["map"].settings.pastURL = climap["map"].settings.nextURL
+    climap["map"].settings.nextURL = locationMap.Next
+    //fmt.Println(climap["map"].settings)
 	}
+  //fmt.Println(locationMap.Results)
+  for i := range locationMap.Results {
+    fmt.Println(locationMap.Results[i].Name)
+  }
 	return nil
 }
 
 func commandMapb() error {
-	fmt.Println("Showing the last next 20 Items!")
+	//fmt.Println("Showing the last next 20 Items!")
 	locationMap, err := pokeAPI.GetLocation(climap["map"].settings.pastURL)
 	if err != nil {
-		fmt.Printf("Request Failed %w\n", err)
+		fmt.Printf("Request Failed \n%w\n", err)
 		return err
 	} else {
-		fmt.Println("Request Sucess")
-		fmt.Println(locationMap)
+		//fmt.Println("Request Sucess")
+    climap["map"].settings.nextURL = climap["map"].settings.pastURL
+    climap["map"].settings.pastURL = locationMap.Previous
+    //fmt.Println(climap["map"].settings)
 	}
+  for i := range locationMap.Results {
+    fmt.Println(locationMap.Results[i].Name)
+  }
 	return nil
 }

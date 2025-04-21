@@ -1,6 +1,9 @@
 package pokecache
 
-import "Time"
+import (
+	"sync"
+	"time"
+)
 
 type cacheEntry struct {
 	createdAt time.Time
@@ -9,20 +12,25 @@ type cacheEntry struct {
 
 type Cache struct {
 	PokeCache map[string]cacheEntry
+	lock      sync.Mutex
 }
 
-func NewCache() Cache {
+func NewCache(internal time.Duration) Cache {
+
+	reapLoop()
+
 	return Cache{}
 }
 
-func AddCache() {
+func AddCache(key string, val []byte) {
 
 }
 
-func GetCache() {
+func GetCache(key string) ([]byte, bool) {
 
+	return nil, false
 }
 
-func ReapLoop() {
+func reapLoop() {
 
 }

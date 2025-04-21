@@ -115,14 +115,14 @@ func commandMap() error {
 		return err
 	} else {
 		//fmt.Println("Request Sucess")
-    climap["map"].settings.pastURL = climap["map"].settings.nextURL
-    climap["map"].settings.nextURL = locationMap.Next
-    //fmt.Println(climap["map"].settings)
+		climap["map"].settings.pastURL = climap["map"].settings.nextURL
+		climap["map"].settings.nextURL = locationMap.Next
+		//fmt.Println(climap["map"].settings)
 	}
-  //fmt.Println(locationMap.Results)
-  for i := range locationMap.Results {
-    fmt.Println(locationMap.Results[i].Name)
-  }
+	//fmt.Println(locationMap.Results)
+	for i := range locationMap.Results {
+		fmt.Println(locationMap.Results[i].Name)
+	}
 	return nil
 }
 
@@ -134,12 +134,12 @@ func commandMapb() error {
 		return err
 	} else {
 		//fmt.Println("Request Sucess")
-    climap["map"].settings.nextURL = climap["map"].settings.pastURL
-    climap["map"].settings.pastURL = locationMap.Previous
-    //fmt.Println(climap["map"].settings)
+		climap["map"].settings.nextURL = climap["map"].settings.pastURL
+		climap["map"].settings.pastURL = locationMap.Previous
+		//fmt.Println(climap["map"].settings)
 	}
-  for i := range locationMap.Results {
-    fmt.Println(locationMap.Results[i].Name)
-  }
+	for i := range locationMap.Results {
+		fmt.Println(locationMap.Results[i].Name)
+	}
 	return nil
 }

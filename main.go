@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/SyncTank/pokedex/pokeAPI"
+	"github.com/SyncTank/pokedex/pokeCache"
 )
 
 type cliCommand struct {
@@ -22,6 +23,7 @@ type config struct {
 }
 
 var climap map[string]cliCommand
+var requestCache Cache
 
 func main() {
 
@@ -92,7 +94,7 @@ func getCommandList() map[string]cliCommand {
 
 func commandHelp() error {
 	fmt.Println("Welcome to the Pokedex!")
-	fmt.Println("Usage:\n")
+	fmt.Println("Usage:")
 
 	for _, item := range climap {
 		fmt.Printf("%s : %s\n", item.name, item.description)
@@ -121,7 +123,10 @@ func commandMap() error {
 	}
 	//fmt.Println(locationMap.Results)
 	for i := range locationMap.Results {
-		fmt.Println(locationMap.Results[i].Name)
+		fmt.Printf(locationMap.Results[i].Name+" %T %T\n", locationMap.Results[i].Name, ([]byte)(locationMap.Results[i].Name))
+		// This conversion is what to cache
+		//dataItem := ([]byte)(locationMap.Results[i].Name)
+		requestCache.AddCache()
 	}
 	return nil
 }
@@ -130,7 +135,7 @@ func commandMapb() error {
 	//fmt.Println("Showing the last next 20 Items!")
 	locationMap, err := pokeAPI.GetLocation(climap["map"].settings.pastURL)
 	if err != nil {
-		fmt.Printf("Request Failed \n%w\n", err)
+		fmt.Println("Request Failed: \n", err)
 		return err
 	} else {
 		//fmt.Println("Request Sucess")

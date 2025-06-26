@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/SyncTank/pokedex/pokeAPI"
-	"github.com/SyncTank/pokedex/pokeCache"
+	"github.com/SyncTank/PokeTestAPI/pokeAPI"
+	"github.com/SyncTank/PokeTestAPI/pokeCache"
 )
 
 type cliCommand struct {

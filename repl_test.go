@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/SyncTank/pokedex/pokeAPI"
+	"github.com/SyncTank/PokeTestAPI/pokeAPI"
 	"testing"
 )
 

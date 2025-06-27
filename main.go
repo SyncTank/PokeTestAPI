@@ -23,7 +23,7 @@ type config struct {
 }
 
 var climap map[string]cliCommand
-var requestCache Cache
+var requestCache pokeCache.Cache
 
 func main() {
 
@@ -126,7 +126,7 @@ func commandMap() error {
 		fmt.Printf(locationMap.Results[i].Name+" %T %T\n", locationMap.Results[i].Name, ([]byte)(locationMap.Results[i].Name))
 		// This conversion is what to cache
 		//dataItem := ([]byte)(locationMap.Results[i].Name)
-		requestCache.AddCache()
+		//pokeCache.AddCache()
 	}
 	return nil
 }

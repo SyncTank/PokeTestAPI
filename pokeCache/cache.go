@@ -14,6 +14,7 @@ type cacheEntry struct {
 type Cache struct {
 	PokeCache map[string]cacheEntry
 	lock      sync.Mutex
+	internal  time.Duration
 }
 
 func NewCache(internal time.Duration) Cache {

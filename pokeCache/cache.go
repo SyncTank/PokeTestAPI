@@ -22,8 +22,7 @@ func NewCache(internal time.Duration) Cache {
 	return Cache{}
 }
 
-func AddCache(key string, val []byte) {
-	cache := Cache{}
+func (cache Cache) AddCache(key string, val []byte) {
 	currentEntry := cacheEntry{
 		createdAt: time.Now(),
 		val:       val,
@@ -31,8 +30,7 @@ func AddCache(key string, val []byte) {
 	cache.PokeCache["key"] = currentEntry
 }
 
-func GetCache(key string) ([]byte, bool) {
-	cache := Cache{}
+func (cache Cache) GetCache(key string) ([]byte, bool) {
 	result, ok := cache.PokeCache[key]
 	if !ok {
 		fmt.Printf("Item not found: %s\n", key)

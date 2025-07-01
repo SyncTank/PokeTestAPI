@@ -2,11 +2,10 @@ package main
 
 import (
 	"fmt"
-	"testing"
-	"time"
-
 	"github.com/SyncTank/PokeTestAPI/pokeAPI"
 	"github.com/SyncTank/PokeTestAPI/pokeCache"
+	"testing"
+	"time"
 )
 
 func TestCleanInput(t *testing.T) {

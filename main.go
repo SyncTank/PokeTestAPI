@@ -5,11 +5,16 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
+
+	"github.com/SyncTank/PokeTestAPI/pokeCache"
 )
 
 func main() {
-
-	climap = getCommandList()
+	const baseTime = 7 * time.Millisecond
+	climap := getCommandList()
+	pokecache := cache.NewCache(baseTime)
+	fmt.Println(pokecache)
 
 	const input = "Pokedex > "
 	scn := bufio.NewScanner(os.Stdin)

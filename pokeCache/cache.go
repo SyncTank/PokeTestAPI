@@ -17,10 +17,14 @@ type Cache struct {
 	internal  time.Duration
 }
 
-func NewCache(internal time.Duration) Cache {
-
-	reapLoop()
-	return Cache{}
+func NewCache(internal time.Duration) *Cache {
+	newCache := &Cache{
+		PokeCache: make(map[string]cacheEntry),
+		lock:      sync.Mutex{},
+		internal:  internal,
+	}
+	go newCache.reapLoop()
+	return newCache
 }
 
 func (cache *Cache) AddCache(key string, val []byte) {
@@ -47,6 +51,15 @@ func (cache *Cache) GetCache(key string) ([]byte, bool) {
 	return result.val, true
 }
 
-func reapLoop() {
+func (cache *Cache) reapLoop() {
+	fmt.Println("New cache call")
+	ticker := time.NewTicker(cache.internal)
 
+	defer ticker.Stop()
+	for {
+		select {
+		case t := <-ticker.C:
+			fmt.Println("Tick", t)
+		}
+	}
 }

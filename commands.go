@@ -77,7 +77,6 @@ func commandHelp() error {
 	fmt.Println("")
 	return nil
 }
-
 func commandExit() error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
@@ -91,12 +90,9 @@ func commandMap() error {
 		fmt.Println("Request Failed %w\n", err)
 		return err
 	} else {
-		//fmt.Println("Request Sucess")
 		climap["map"].settings.pastURL = climap["map"].settings.nextURL
 		climap["map"].settings.nextURL = locationMap.Next
-		//fmt.Println(climap["map"].settings)
 	}
-	//fmt.Println(locationMap.Results)
 	for i := range locationMap.Results {
 		fmt.Printf(locationMap.Results[i].Name+" %T %T\n", locationMap.Results[i].Name, ([]byte)(locationMap.Results[i].Name))
 		// This conversion is what to cache
@@ -113,10 +109,8 @@ func commandMapb() error {
 		fmt.Println("Request Failed: \n", err)
 		return err
 	} else {
-		//fmt.Println("Request Sucess")
 		climap["map"].settings.nextURL = climap["map"].settings.pastURL
 		climap["map"].settings.pastURL = locationMap.Previous
-		//fmt.Println(climap["map"].settings)
 	}
 	for i := range locationMap.Results {
 		fmt.Println(locationMap.Results[i].Name)

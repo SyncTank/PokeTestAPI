@@ -11,10 +11,10 @@ import (
 )
 
 func main() {
-	const baseTime = 7 * time.Millisecond
-	climap := getCommandList()
-	pokecache := cache.NewCache(baseTime)
-	fmt.Println(pokecache)
+	const baseTime = 7 * time.Second
+	climap = getCommandList()                // global commands.go
+	requestcache := cache.NewCache(baseTime) // global commands.go
+	fmt.Println(&requestcache)
 
 	const input = "Pokedex > "
 	scn := bufio.NewScanner(os.Stdin)

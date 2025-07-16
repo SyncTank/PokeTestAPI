@@ -37,12 +37,16 @@ func (cache *Cache) AddCache(key string, val []byte) {
 	if cache.PokeCache == nil {
 		cache.PokeCache = make(map[string]cacheEntry)
 	}
-	cache.PokeCache["key"] = currentEntry
+	cache.PokeCache[key] = currentEntry
 }
 
+// the key is the url
 func (cache *Cache) GetCache(key string) ([]byte, bool) {
 	cache.lock.Lock()
 	defer cache.lock.Unlock()
+	if cache.PokeCache == nil {
+		cache.PokeCache = make(map[string]cacheEntry)
+	}
 	result, ok := cache.PokeCache[key]
 	if !ok {
 		fmt.Printf("Item not found: %s\n", key)
@@ -52,14 +56,14 @@ func (cache *Cache) GetCache(key string) ([]byte, bool) {
 }
 
 func (cache *Cache) reapLoop() {
-	fmt.Println("New cache call")
 	ticker := time.NewTicker(cache.internal)
 
 	defer ticker.Stop()
 	for {
 		select {
 		case t := <-ticker.C:
-			fmt.Println("Tick", t)
+			//fmt.Println("Tick", t)
+			t = t
 		}
 	}
 }

@@ -85,25 +85,32 @@ func commandExit() error {
 
 func commandMap() error {
 	//fmt.Println("Showing the next 20 Items!")
-	locationMap, err := pokeAPI.GetLocation(climap["map"].settings.nextURL)
-	if err != nil {
-		fmt.Println("Request Failed %w\n", err)
-		return err
+	fmt.Println(climap["map"].settings.nextURL)
+	cachemap, ok := requestCache.GetCache(climap["map"].settings.nextURL)
+	if !ok {
+		locationMap, err := pokeAPI.GetLocation(climap["map"].settings.nextURL)
+		if err != nil {
+			fmt.Println("Request Failed %w\n", err)
+			return err
+		} else {
+			climap["map"].settings.pastURL = climap["map"].settings.nextURL
+			climap["map"].settings.nextURL = locationMap.Next
+		}
+		results := ""
+		for i := range locationMap.Results {
+			fmt.Println(locationMap.Results[i].Name)
+			results += locationMap.Results[i].Name
+		}
+		requestCache.AddCache(climap["map"].settings.nextURL, ([]byte)(results))
 	} else {
-		climap["map"].settings.pastURL = climap["map"].settings.nextURL
-		climap["map"].settings.nextURL = locationMap.Next
-	}
-	for i := range locationMap.Results {
-		fmt.Printf(locationMap.Results[i].Name+" %T %T\n", locationMap.Results[i].Name, ([]byte)(locationMap.Results[i].Name))
-		// This conversion is what to cache
-		//dataItem := ([]byte)(locationMap.Results[i].Name)
-		//pokeCache.AddCache()
+		fmt.Println(cachemap)
 	}
 	return nil
 }
 
 func commandMapb() error {
 	//fmt.Println("Showing the last next 20 Items!")
+	fmt.Println(climap["map"].settings.pastURL)
 	locationMap, err := pokeAPI.GetLocation(climap["map"].settings.pastURL)
 	if err != nil {
 		fmt.Println("Request Failed: \n", err)
@@ -112,8 +119,11 @@ func commandMapb() error {
 		climap["map"].settings.nextURL = climap["map"].settings.pastURL
 		climap["map"].settings.pastURL = locationMap.Previous
 	}
+	results := ""
 	for i := range locationMap.Results {
 		fmt.Println(locationMap.Results[i].Name)
+		results += locationMap.Results[i].Name
 	}
+	requestCache.AddCache("Mapb", ([]byte)(results))
 	return nil
 }

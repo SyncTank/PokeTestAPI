@@ -16,8 +16,9 @@ type cliCommand struct {
 }
 
 type config struct {
-	nextURL string
-	pastURL string
+	nextURL    string
+	currentURL string
+	pastURL    string
 }
 
 var climap map[string]cliCommand
@@ -37,8 +38,9 @@ func cleanInput(text string) []string {
 
 func getCommandList() map[string]cliCommand {
 	var nConfig = config{
-		nextURL: pokeAPI.Endpoint,
-		pastURL: "",
+		nextURL:    pokeAPI.Endpoint,
+		currentURL: pokeAPI.Endpoint,
+		pastURL:    "",
 	}
 	var result = map[string]cliCommand{
 		"exit": {
@@ -83,8 +85,7 @@ func commandExit() error {
 	return nil
 }
 
-func commandMap() error {
-	//fmt.Println("Showing the next 20 Items!")
+func commandMap() error { // show next 20 items
 	fmt.Println(climap["map"].settings.nextURL)
 	cachemap, ok := requestCache.GetCache(climap["map"].settings.nextURL)
 	if !ok {
@@ -93,37 +94,58 @@ func commandMap() error {
 			fmt.Println("Request Failed %w\n", err)
 			return err
 		} else {
-			climap["map"].settings.pastURL = climap["map"].settings.nextURL
+			results := ""
+			for i := range locationMap.Results {
+				fmt.Println(locationMap.Results[i].Name)
+				results += locationMap.Results[i].Name + "\n"
+			}
+			// P C N | 0 1 1 | 1 1 2 | 1 2 3 | 2 3 4
+
+			requestCache.AddCache(climap["map"].settings.nextURL, ([]byte)(results))
+			climap["map"].settings.pastURL = climap["map"].settings.currentURL
+			climap["map"].settings.currentURL = climap["map"].settings.nextURL
 			climap["map"].settings.nextURL = locationMap.Next
 		}
-		results := ""
-		for i := range locationMap.Results {
-			fmt.Println(locationMap.Results[i].Name)
-			results += locationMap.Results[i].Name
-		}
-		requestCache.AddCache(climap["map"].settings.nextURL, ([]byte)(results))
 	} else {
+		fmt.Println("CACHED!")
 		fmt.Println(cachemap)
+		for _, j := range cachemap {
+			fmt.Println(string(j))
+		}
+		climap["map"].settings.pastURL = climap["map"].settings.nextURL
 	}
 	return nil
 }
 
-func commandMapb() error {
-	//fmt.Println("Showing the last next 20 Items!")
+func commandMapb() error { // show last 20 items
 	fmt.Println(climap["map"].settings.pastURL)
-	locationMap, err := pokeAPI.GetLocation(climap["map"].settings.pastURL)
-	if err != nil {
-		fmt.Println("Request Failed: \n", err)
-		return err
+	cachemap, ok := requestCache.GetCache(climap["map"].settings.pastURL)
+	if !ok {
+		locationMap, err := pokeAPI.GetLocation(climap["map"].settings.pastURL)
+		if err != nil {
+			fmt.Println("Request Failed: \n", err)
+			return err
+		} else {
+			results := ""
+			for i := range locationMap.Results {
+				fmt.Println(locationMap.Results[i].Name)
+				results += locationMap.Results[i].Name + "\n"
+			}
+			requestCache.AddCache(climap["map"].settings.pastURL, ([]byte)(results))
+			climap["map"].settings.nextURL = climap["map"].settings.currentURL
+			climap["map"].settings.currentURL = climap["map"].settings.pastURL
+			climap["map"].settings.pastURL = locationMap.Previous
+		}
 	} else {
-		climap["map"].settings.nextURL = climap["map"].settings.pastURL
-		climap["map"].settings.pastURL = locationMap.Previous
+		fmt.Println("CACHED!")
+		fmt.Println(string(cachemap))
+		items := strings.Split(string(cachemap), "\n")
+		fmt.Println(items)
+		for j := range items {
+			fmt.Println(string(j))
+		}
+		climap["map"].settings.nextURL = climap["map"].settings.currentURL
+		climap["map"].settings.currentURL = climap["map"].settings.pastURL
 	}
-	results := ""
-	for i := range locationMap.Results {
-		fmt.Println(locationMap.Results[i].Name)
-		results += locationMap.Results[i].Name
-	}
-	requestCache.AddCache("Mapb", ([]byte)(results))
 	return nil
 }

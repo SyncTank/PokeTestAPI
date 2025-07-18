@@ -97,7 +97,7 @@ func commandMap() error { // show next 20 items
 			results := ""
 			for i := range locationMap.Results {
 				fmt.Println(locationMap.Results[i].Name)
-				results += locationMap.Results[i].Name + "\n"
+				results += locationMap.Results[i].Name + "\\n"
 			}
 			// P C N | 0 1 1 | 1 1 2 | 1 2 3 | 2 3 4
 
@@ -108,11 +108,13 @@ func commandMap() error { // show next 20 items
 		}
 	} else {
 		fmt.Println("CACHED!")
-		fmt.Println(cachemap)
-		for _, j := range cachemap {
-			fmt.Println(string(j))
+		//fmt.Println(string(cachemap))
+		items := strings.Split(string(cachemap), "\\n")
+		for i := range items {
+			fmt.Println(items[i])
 		}
-		climap["map"].settings.pastURL = climap["map"].settings.nextURL
+		climap["map"].settings.pastURL = climap["map"].settings.currentURL
+		climap["map"].settings.currentURL = climap["map"].settings.nextURL
 	}
 	return nil
 }
@@ -129,7 +131,7 @@ func commandMapb() error { // show last 20 items
 			results := ""
 			for i := range locationMap.Results {
 				fmt.Println(locationMap.Results[i].Name)
-				results += locationMap.Results[i].Name + "\n"
+				results += locationMap.Results[i].Name + "\\n"
 			}
 			requestCache.AddCache(climap["map"].settings.pastURL, ([]byte)(results))
 			climap["map"].settings.nextURL = climap["map"].settings.currentURL
@@ -138,11 +140,10 @@ func commandMapb() error { // show last 20 items
 		}
 	} else {
 		fmt.Println("CACHED!")
-		fmt.Println(string(cachemap))
-		items := strings.Split(string(cachemap), "\n")
-		fmt.Println(items)
-		for j := range items {
-			fmt.Println(string(j))
+		//fmt.Println(string(cachemap))
+		items := strings.Split(string(cachemap), "\\n")
+		for i := range items {
+			fmt.Println(items[i])
 		}
 		climap["map"].settings.nextURL = climap["map"].settings.currentURL
 		climap["map"].settings.currentURL = climap["map"].settings.pastURL

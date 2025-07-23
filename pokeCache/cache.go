@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"fmt"
+	_ "fmt"
 	"sync"
 	"time"
 )
@@ -49,21 +49,24 @@ func (cache *Cache) GetCache(key string) ([]byte, bool) {
 	}
 	result, ok := cache.PokeCache[key]
 	if !ok {
-		fmt.Printf("Item not found: %s\n", key)
+		//fmt.Printf("Item not found: %s\n", key)
 		return nil, false
 	}
 	return result.val, true
 }
 
 func (cache *Cache) reapLoop() {
-	ticker := time.NewTicker(cache.internal)
+	ticker := time.Tick(cache.internal)
 
-	defer ticker.Stop()
-	for {
-		select {
-		case t := <-ticker.C:
-			//fmt.Println("Tick", t)
-			t = t
+	now := time.Now()
+	past := now.Add(cache.internal)
+
+	for range ticker {
+		for item := range cache.PokeCache {
+			if past.Before(cache.PokeCache[item].createdAt) {
+				delete(cache.PokeCache, item)
+			}
 		}
 	}
+
 }

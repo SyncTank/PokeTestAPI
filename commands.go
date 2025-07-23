@@ -22,7 +22,7 @@ type config struct {
 }
 
 var climap map[string]cliCommand
-var requestCache cache.Cache
+var requestCache *cache.Cache
 
 func cleanInput(text string) []string {
 	strList := make([]string, 0)
@@ -86,7 +86,7 @@ func commandExit() error {
 }
 
 func commandMap() error { // show next 20 items
-	fmt.Println(climap["map"].settings.nextURL)
+	//fmt.Println(climap["map"].settings.nextURL)
 	cachemap, ok := requestCache.GetCache(climap["map"].settings.nextURL)
 	if !ok {
 		locationMap, err := pokeAPI.GetLocation(climap["map"].settings.nextURL)
@@ -107,10 +107,10 @@ func commandMap() error { // show next 20 items
 			climap["map"].settings.nextURL = locationMap.Next
 		}
 	} else {
-		fmt.Println("CACHED!")
+		//fmt.Println("CACHED!")
 		//fmt.Println(string(cachemap))
 		items := strings.Split(string(cachemap), "\\n")
-		for i := range items {
+		for i := range len(items) - 1 {
 			fmt.Println(items[i])
 		}
 		climap["map"].settings.pastURL = climap["map"].settings.currentURL
@@ -120,7 +120,7 @@ func commandMap() error { // show next 20 items
 }
 
 func commandMapb() error { // show last 20 items
-	fmt.Println(climap["map"].settings.pastURL)
+	//fmt.Println(climap["map"].settings.pastURL)
 	cachemap, ok := requestCache.GetCache(climap["map"].settings.pastURL)
 	if !ok {
 		locationMap, err := pokeAPI.GetLocation(climap["map"].settings.pastURL)
@@ -139,10 +139,10 @@ func commandMapb() error { // show last 20 items
 			climap["map"].settings.pastURL = locationMap.Previous
 		}
 	} else {
-		fmt.Println("CACHED!")
+		//fmt.Println("CACHED!")
 		//fmt.Println(string(cachemap))
 		items := strings.Split(string(cachemap), "\\n")
-		for i := range items {
+		for i := range len(items) - 1 {
 			fmt.Println(items[i])
 		}
 		climap["map"].settings.nextURL = climap["map"].settings.currentURL

@@ -56,17 +56,19 @@ func (cache *Cache) GetCache(key string) ([]byte, bool) {
 }
 
 func (cache *Cache) reapLoop() {
-	ticker := time.Tick(cache.internal)
+	ticker := time.NewTicker(cache.internal)
+	defer ticker.Stop()
 
-	now := time.Now()
-	past := now.Add(cache.internal)
-
-	for range ticker {
-		for item := range cache.PokeCache {
-			if past.Before(cache.PokeCache[item].createdAt) {
-				delete(cache.PokeCache, item)
+	for range ticker.C {
+		cache.lock.Lock()
+		now := time.Now()
+		cutoff := now.Add(-cache.internal)
+		for k, e := range cache.PokeCache {
+			if e.createdAt.Before(cutoff) {
+				delete(cache.PokeCache, k)
 			}
 		}
+		cache.lock.Unlock()
 	}
 
 }

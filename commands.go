@@ -8,10 +8,11 @@ import (
 	"strings"
 )
 
-type cliCommand struct {
+type cliCommands struct {
 	name        string
 	description string
 	callback    func() error
+	argv        string
 	settings    *config
 }
 
@@ -21,7 +22,7 @@ type config struct {
 	pastURL    string
 }
 
-var climap map[string]cliCommand
+var climap map[string]cliCommands
 var requestCache *cache.Cache
 
 func cleanInput(text string) []string {
@@ -36,13 +37,13 @@ func cleanInput(text string) []string {
 	return results
 }
 
-func getCommandList() map[string]cliCommand {
+func getCommandList() map[string]cliCommands {
 	var nConfig = config{
 		nextURL:    pokeAPI.Endpoint,
 		currentURL: pokeAPI.Endpoint,
 		pastURL:    "",
 	}
-	var result = map[string]cliCommand{
+	var result = map[string]cliCommands{
 		"exit": {
 			name:        "exit",
 			description: "Exit the Pokedex",

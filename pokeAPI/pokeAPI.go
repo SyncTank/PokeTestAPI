@@ -37,3 +37,20 @@ func GetLocation(url string) (Location, error) {
 
 	return result, nil
 }
+
+func GetPokemons(url string) (Location, error) {
+
+	res, err := http.Get(url)
+	if err != nil {
+		return Location{}, fmt.Errorf("Error creating request: %w", err)
+	}
+	defer res.Body.Close()
+
+	var result Location
+	data, err := io.ReadAll(res.Body)
+	if err = json.Unmarshal(data, &result); err != nil {
+		return Location{}, err
+	}
+
+	return result, nil
+}

@@ -12,7 +12,6 @@ type cliCommands struct {
 	name        string
 	description string
 	callback    func() error
-	argv        string
 	settings    *config
 }
 
@@ -20,6 +19,7 @@ type config struct {
 	nextURL    string
 	currentURL string
 	pastURL    string
+	argv       string
 }
 
 var climap map[string]cliCommands
@@ -42,6 +42,7 @@ func getCommandList() map[string]cliCommands {
 		nextURL:    pokeAPI.Endpoint,
 		currentURL: pokeAPI.Endpoint,
 		pastURL:    "",
+		argv:       "",
 	}
 	var result = map[string]cliCommands{
 		"exit": {
@@ -66,8 +67,20 @@ func getCommandList() map[string]cliCommands {
 			callback:    commandMapb,
 			settings:    &nConfig,
 		},
+		"explore": {
+			name:        "explore",
+			description: "Displays list of pokemon in a certain location",
+			callback:    commandExplore,
+			settings:    &nConfig,
+		},
 	}
 	return result
+}
+
+func commandExplore() error {
+	fmt.Println("Exploring " + climap["explore"].settings.argv + "...")
+	fmt.Println("Found Pokemon:")
+	return nil
 }
 
 func commandHelp() error {
@@ -100,7 +113,6 @@ func commandMap() error { // show next 20 items
 				fmt.Println(locationMap.Results[i].Name)
 				results += locationMap.Results[i].Name + "\\n"
 			}
-			// P C N | 0 1 1 | 1 1 2 | 1 2 3 | 2 3 4
 
 			requestCache.AddCache(climap["map"].settings.nextURL, ([]byte)(results))
 			climap["map"].settings.pastURL = climap["map"].settings.currentURL

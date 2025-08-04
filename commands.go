@@ -80,6 +80,12 @@ func getCommandList() map[string]cliCommands {
 func commandExplore() error {
 	fmt.Println("Exploring " + climap["explore"].settings.argv + "...")
 	fmt.Println("Found Pokemon:")
+	pokemonMap, err := pokeAPI.GetPokemons(pokeAPI.Endpoint + "/" + climap["explore"].settings.argv)
+	if err != nil {
+		fmt.Println("Request Failed", err)
+		return err
+	}
+	fmt.Println(pokemonMap)
 	return nil
 }
 
@@ -105,7 +111,7 @@ func commandMap() error { // show next 20 items
 	if !ok {
 		locationMap, err := pokeAPI.GetLocation(climap["map"].settings.nextURL)
 		if err != nil {
-			fmt.Println("Request Failed %w\n", err)
+			fmt.Println("Request Failed", err)
 			return err
 		} else {
 			results := ""

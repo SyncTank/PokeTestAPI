@@ -80,12 +80,26 @@ func getCommandList() map[string]cliCommands {
 func commandExplore() error {
 	fmt.Println("Exploring " + climap["explore"].settings.argv + "...")
 	fmt.Println("Found Pokemon:")
-	pokemonMap, err := pokeAPI.GetPokemons(pokeAPI.Endpoint + "/" + climap["explore"].settings.argv)
-	if err != nil {
-		fmt.Println("Request Failed", err)
-		return err
+	cachemap, ok := requestCache.GetCache(climap["explore"].settings.argv)
+	if !ok {
+		pokemonMap, err := pokeAPI.GetPokemons(pokeAPI.Endpoint + "/" + climap["explore"].settings.argv)
+		if err != nil {
+			fmt.Println("Request Failed", err)
+			return err
+		} else {
+			results := ""
+			for i := range pokemonMap.PokemonEncounters {
+				fmt.Println(" - " + pokemonMap.PokemonEncounters[i].Pokemon.Name)
+				results += pokemonMap.PokemonEncounters[i].Pokemon.Name + "\\n"
+			}
+			requestCache.AddCache(climap["explore"].settings.argv, ([]byte)(results))
+		}
+	} else {
+		items := strings.Split(string(cachemap), "\\n")
+		for i := range len(items) - 1 {
+			fmt.Println(" - " + items[i])
+		}
 	}
-	fmt.Println(pokemonMap)
 	return nil
 }
 
@@ -126,8 +140,6 @@ func commandMap() error { // show next 20 items
 			climap["map"].settings.nextURL = locationMap.Next
 		}
 	} else {
-		//fmt.Println("CACHED!")
-		//fmt.Println(string(cachemap))
 		items := strings.Split(string(cachemap), "\\n")
 		for i := range len(items) - 1 {
 			fmt.Println(items[i])
@@ -158,8 +170,6 @@ func commandMapb() error { // show last 20 items
 			climap["map"].settings.pastURL = locationMap.Previous
 		}
 	} else {
-		//fmt.Println("CACHED!")
-		//fmt.Println(string(cachemap))
 		items := strings.Split(string(cachemap), "\\n")
 		for i := range len(items) - 1 {
 			fmt.Println(items[i])

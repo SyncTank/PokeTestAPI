@@ -75,7 +75,5 @@ func GetPokemons(url string) (LocationArea, error) {
 		return LocationArea{}, fmt.Errorf("Error Decoding Data %s", string(data))
 	}
 
-	fmt.Println(result)
-
 	return result, nil
 }

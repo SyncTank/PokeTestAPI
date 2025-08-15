@@ -73,8 +73,32 @@ func getCommandList() map[string]cliCommands {
 			callback:    commandExplore,
 			settings:    &nConfig,
 		},
+		"catch": {
+			name:        "catch",
+			description: "Catches a certain pokemon",
+			callback:    commandCatch,
+			settings:    &nConfig,
+		},
+		"inspect": {
+			name:        "inspect",
+			description: "Prints the name, height, weight, stats and type(s) of the Pokemon",
+			callback:    commandInspect,
+			settings:    &nConfig,
+		},
 	}
 	return result
+}
+
+func commandInspect() error {
+	fmt.Println("Throwing a Pokeball at " + "...")
+
+	return nil
+}
+
+func commandCatch() error {
+	fmt.Println("Throwing a Pokeball at " + "...")
+
+	return nil
 }
 
 func commandExplore() error {

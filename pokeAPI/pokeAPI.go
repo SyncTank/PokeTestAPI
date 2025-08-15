@@ -9,6 +9,10 @@ import (
 
 const Endpoint string = "https://pokeapi.co/api/v2/location-area"
 
+type PokeDex struct {
+	pokedex map[string]Pokemon
+}
+
 type Pokemon struct {
 	Name string `json:"name"`
 	URL  string `json:"url"`

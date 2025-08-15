@@ -28,7 +28,7 @@ func main() {
 		if !ok {
 			fmt.Println("Unknown command")
 		} else {
-			if len(dataList) > 1 && dataList[0] == "explore" {
+			if len(dataList) == 2 {
 				cap.settings.argv = dataList[1]
 			}
 			cap.callback()

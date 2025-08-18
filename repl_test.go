@@ -36,7 +36,7 @@ func TestCleanInput(t *testing.T) {
 }
 
 func TestPokeEndPoint(t *testing.T) {
-	_, err := pokeAPI.GetLocation(pokeAPI.Endpoint)
+	_, err := pokeAPI.GetLocation(pokeAPI.Endpoint + pokeAPI.LoctionEndpoint)
 	if err != nil {
 		t.Errorf("Error reaching endpoint:")
 		return

@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"github.com/SyncTank/PokeTestAPI/pokeAPI"
 	"github.com/SyncTank/PokeTestAPI/pokeCache"
+	"math/rand"
 	"os"
 	"strings"
+	"time"
 )
 
 type cliCommands struct {
@@ -39,8 +41,8 @@ func cleanInput(text string) []string {
 
 func getCommandList() map[string]cliCommands {
 	var nConfig = config{
-		nextURL:    pokeAPI.Endpoint,
-		currentURL: pokeAPI.Endpoint,
+		nextURL:    pokeAPI.Endpoint + pokeAPI.LoctionEndpoint,
+		currentURL: pokeAPI.Endpoint + pokeAPI.LoctionEndpoint,
 		pastURL:    "",
 		argv:       "",
 	}
@@ -75,7 +77,7 @@ func getCommandList() map[string]cliCommands {
 		},
 		"catch": {
 			name:        "catch",
-			description: "Catches a certain pokemon",
+			description: "Attmepts to catch a pokemon",
 			callback:    commandCatch,
 			settings:    &nConfig,
 		},
@@ -96,7 +98,16 @@ func commandInspect() error {
 }
 
 func commandCatch() error {
-	fmt.Println("Throwing a Pokeball at " + "...")
+	pokemon, err := pokeAPI.GetPokemon(pokeAPI.Endpoint + pokeAPI.PokemonEndpoint + climap["catch"].settings.argv)
+	if err != nil {
+		fmt.Println("Request Failed", err)
+		return err
+	} else {
+		r := rand.New(rand.NewSource(time.Now().UnixNano() + int64(pokemon.Height*pokemon.Weight)))
+		fmt.Println("Random : ", r.Intn(100)+pokemon.Base_experience/pokemon.Base_experience)
+	}
+	fmt.Println(pokemon)
+	fmt.Println("Throwing a Pokeball at " + climap["catch"].settings.argv + "...")
 
 	return nil
 }
@@ -106,7 +117,7 @@ func commandExplore() error {
 	fmt.Println("Found Pokemon:")
 	cachemap, ok := requestCache.GetCache(climap["explore"].settings.argv)
 	if !ok {
-		pokemonMap, err := pokeAPI.GetPokemons(pokeAPI.Endpoint + "/" + climap["explore"].settings.argv)
+		pokemonMap, err := pokeAPI.GetPokemons(pokeAPI.Endpoint + pokeAPI.LoctionEndpoint + climap["explore"].settings.argv)
 		if err != nil {
 			fmt.Println("Request Failed", err)
 			return err

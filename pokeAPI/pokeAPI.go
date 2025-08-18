@@ -7,15 +7,20 @@ import (
 	"net/http"
 )
 
-const Endpoint string = "https://pokeapi.co/api/v2/location-area"
+const Endpoint string = "https://pokeapi.co/api/v2/"
+const LoctionEndpoint string = "location-area/"
+const PokemonEndpoint string = "pokemon/"
 
 type PokeDex struct {
 	pokedex map[string]Pokemon
 }
 
 type Pokemon struct {
-	Name string `json:"name"`
-	URL  string `json:"url"`
+	Name            string `json:"name"`
+	ID              int    `json:"id"`
+	Base_experience int    `json:"base_experience"`
+	Height          int    `json:"height"`
+	Weight          int    `json:"weight"`
 }
 
 type PokemonEncounter struct {
@@ -50,6 +55,33 @@ func GetLocation(url string) (Location, error) {
 	data, err := io.ReadAll(res.Body)
 	if err = json.Unmarshal(data, &result); err != nil {
 		return Location{}, err
+	}
+
+	return result, nil
+}
+
+func GetPokemon(url string) (Pokemon, error) {
+	res, err := http.Get(url)
+	//fmt.Println(url)
+	if err != nil {
+		return Pokemon{}, fmt.Errorf("Error creating request: %w", err)
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(res.Body)
+		return Pokemon{}, fmt.Errorf("HTTP failed %s", string(body))
+	}
+
+	data, err := io.ReadAll(res.Body)
+	if err != nil {
+		return Pokemon{}, fmt.Errorf("Error Reading data")
+	}
+
+	var result Pokemon
+	err = json.Unmarshal(data, &result)
+	if err != nil {
+		return Pokemon{}, fmt.Errorf("Error Decoding Data %s", string(data))
 	}
 
 	return result, nil

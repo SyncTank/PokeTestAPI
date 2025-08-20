@@ -90,8 +90,25 @@ func getCommandList() map[string]cliCommands {
 			callback:    commandInspect,
 			settings:    &nConfig,
 		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "List of your pokemon",
+			callback:    commandPokeDex,
+		},
 	}
 	return result
+}
+
+func commandPokeDex() error {
+	if len(dex.Pokedex) == 0 {
+		fmt.Println("No Pokemon Found")
+		return nil
+	}
+	fmt.Println("Your Pokedex:")
+	for i := range dex.Pokedex {
+		fmt.Printf(" - %s\n", i)
+	}
+	return nil
 }
 
 func commandInspect() error {

@@ -96,7 +96,23 @@ func getCommandList() map[string]cliCommands {
 
 func commandInspect() error {
 	fmt.Println("Throwing a Pokeball at " + "...")
-
+	pokemon, ok := dex.Pokedex[climap["catch"].settings.argv]
+	if !ok {
+		fmt.Println("you have not caught that pokemon")
+		return nil
+	} else {
+		fmt.Println("Name: ", pokemon.Name)
+		fmt.Println("Height: ", pokemon.Height)
+		fmt.Println("Weight: ", pokemon.Weight)
+		fmt.Println("Stats: ")
+		for i := range pokemon.Stats {
+			fmt.Printf(" -%s: %d\n", pokemon.Stats[i].PStat.Name, pokemon.Stats[i].Base_stat)
+		}
+		fmt.Println("Types: ")
+		for j := range pokemon.Types {
+			fmt.Println(" - " + pokemon.Types[j].Type.Name)
+		}
+	}
 	return nil
 }
 

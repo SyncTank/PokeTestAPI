@@ -15,12 +15,35 @@ type PokeDex struct {
 	Pokedex map[string]Pokemon
 }
 
+type Type struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type Stat struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type PokemonType struct {
+	Slot int  `json:"slot"`
+	Type Type `json:"type"`
+}
+
+type PokemonStat struct {
+	PStat     Stat `json:"stat"`
+	Effort    int  `json:"effort"`
+	Base_stat int  `json:"base_stat"`
+}
+
 type Pokemon struct {
-	Name            string `json:"name"`
-	ID              int    `json:"id"`
-	Base_experience int    `json:"base_experience"`
-	Height          int    `json:"height"`
-	Weight          int    `json:"weight"`
+	Name            string        `json:"name"`
+	ID              int           `json:"id"`
+	Base_experience int           `json:"base_experience"`
+	Height          int           `json:"height"`
+	Weight          int           `json:"weight"`
+	Stats           []PokemonStat `json:"stats"`
+	Types           []PokemonType `json:"types"`
 }
 
 type PokemonEncounter struct {

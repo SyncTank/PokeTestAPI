@@ -2,12 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/SyncTank/PokeTestAPI/pokeAPI"
-	"github.com/SyncTank/PokeTestAPI/pokeCache"
+	"math"
 	"math/rand"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/SyncTank/PokeTestAPI/pokeAPI"
+	"github.com/SyncTank/PokeTestAPI/pokeCache"
 )
 
 type cliCommands struct {
@@ -24,6 +26,7 @@ type config struct {
 	argv       string
 }
 
+var dex pokeAPI.PokeDex
 var climap map[string]cliCommands
 var requestCache *cache.Cache
 
@@ -99,16 +102,32 @@ func commandInspect() error {
 
 func commandCatch() error {
 	pokemon, err := pokeAPI.GetPokemon(pokeAPI.Endpoint + pokeAPI.PokemonEndpoint + climap["catch"].settings.argv)
+	isCaught := false
 	if err != nil {
 		fmt.Println("Request Failed", err)
 		return err
 	} else {
-		r := rand.New(rand.NewSource(time.Now().UnixNano() + int64(pokemon.Height*pokemon.Weight)))
-		fmt.Println("Random : ", r.Intn(100)+pokemon.Base_experience/pokemon.Base_experience)
-	}
-	fmt.Println(pokemon)
-	fmt.Println("Throwing a Pokeball at " + climap["catch"].settings.argv + "...")
+		r := rand.New(rand.NewSource(time.Now().UnixNano()))
 
+		ratio := ((48 / ((math.Sqrt(float64(pokemon.Base_experience))) - (99 / float64(pokemon.Weight*pokemon.Height)) + 1)) + 1 + (10 / (math.Sqrt(float64(pokemon.Base_experience))))) * 10
+		chance := r.Intn(50)
+		//fmt.Println("Random : ", ratio, chance)
+		if chance+int(ratio) > 50 {
+			isCaught = true
+		} else {
+			isCaught = false
+		}
+	}
+	fmt.Println("Throwing a Pokeball at " + climap["catch"].settings.argv + "...")
+	if isCaught {
+		fmt.Println(climap["catch"].settings.argv + " was caught!")
+		if dex.Pokedex == nil {
+			dex.Pokedex = make(map[string]pokeAPI.Pokemon)
+		}
+		dex.Pokedex[climap["catch"].settings.argv] = pokemon
+	} else {
+		fmt.Println(climap["catch"].settings.argv + " escaped!")
+	}
 	return nil
 }
 

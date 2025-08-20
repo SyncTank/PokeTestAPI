@@ -12,7 +12,7 @@ const LoctionEndpoint string = "location-area/"
 const PokemonEndpoint string = "pokemon/"
 
 type PokeDex struct {
-	pokedex map[string]Pokemon
+	Pokedex map[string]Pokemon
 }
 
 type Pokemon struct {

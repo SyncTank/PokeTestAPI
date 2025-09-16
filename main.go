@@ -14,7 +14,7 @@ func main() {
 	const baseTime = 7 * time.Second
 	climap = getCommandList()               // global commands.go
 	requestCache = cache.NewCache(baseTime) // global commands.go
-	//fmt.Println(&requestcache)
+	//fmt.Println(&requestcache) test
 
 	const input = "Pokedex > "
 	scn := bufio.NewScanner(os.Stdin)
